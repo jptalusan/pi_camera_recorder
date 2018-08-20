@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  flask-picamera:
+    build:
+      context: ./pi_site
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./pi_site:/app
+    container_name: pi_site
+    devices:
+      - "/dev/vchiq"
