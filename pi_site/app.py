@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, Response, request, jsonify
 import json
 import glob
+import requests
 
 # Raspberry Pi camera module (requires picamera package)
 from camera_pi import Camera
@@ -12,6 +13,15 @@ app = Flask(__name__)
 
 PIC_FOLDER = os.path.join('static', 'pi_photos')
 app.config['UPLOAD_FOLDER'] = PIC_FOLDER
+
+def get_recording_status():
+    uri = "http://163.221.68.237:5000/is_recording"
+    try:
+        uResponse = requests.get(uri)
+    except requests.ConnectionError:
+       return "Connection Error"  
+    Jresponse = uResponse.text
+    return Jresponse
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -30,9 +40,13 @@ def index():
           f.seek(0)        # <--- should reset file position to the beginning.
           json.dump(data, f, indent=4)
           f.truncate()     # remove remaining part
-        return render_template('index.html', extra_text=recording_state)
+
+        status = get_recording_status()
+        return render_template('index.html', extra_text=status)
     """Video streaming home page."""
-    return render_template('index.html', extra_text="Start recording")
+
+    status = get_recording_status()
+    return render_template('index.html', extra_text=status)
 
 
 def gen(camera):
@@ -54,6 +68,16 @@ def get_latest_file():
 def pi_photos():
     latest_file = {'path': get_latest_file()}
     return jsonify(latest_file)
+
+@app.route('/is_recording')
+def is_recording():
+    with open('flags.json', 'r+') as f:
+        data = json.load(f)
+        status = {}
+        status['status'] = data['recording']
+
+        f.close()
+    return status['status']
 
 @app.route('/video_feed')
 def video_feed():

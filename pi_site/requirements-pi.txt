@@ -9,3 +9,4 @@ Pillow
 pytz
 flask-socketio
 eventlet
+requests

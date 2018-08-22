@@ -10,16 +10,22 @@
     <script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='app.js') }}"></script>
   </head>
   <body>
-
+    {% if extra_text == "True" %}
     <h1 id="toptitle"></h1>
-
+    {% endif %}
     <div class="container">
       <!--<button id="record_button" type="button">StartRecord</button>-->
       <h1>Video Streaming Demonstration</h1>
       <img src="{{ url_for('video_feed') }}">
       <form action="/" method="POST">
         <!--<input name="text"><input type="submit" value="Echo">-->
-        <button name="text" value="Echo">{{ extra_text }}</button>
+        <button name="text" value="Echo">
+          {% if extra_text == "False" %}
+            Start Recording
+          {% else %}
+            Stop Recording
+          {% endif %}
+        </button>
       </form>
     </div>
 
