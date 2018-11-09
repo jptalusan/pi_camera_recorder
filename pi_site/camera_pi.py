@@ -26,7 +26,7 @@ class Camera(BaseCamera):
         with picamera.PiCamera() as camera:
             # let camera warm up
             time.sleep(2)
-
+            camera.resolution = (640, 480)
             stream = io.BytesIO()
             for _ in camera.capture_continuous(stream, 'jpeg',
                                                  use_video_port=True):
@@ -35,7 +35,7 @@ class Camera(BaseCamera):
                 yield stream.read()
                 curr_time = datetime.datetime.now()
                 seconds = curr_time.strftime('%S')
-                if int(seconds) % 5 == 0 and get_rec_flag() == "True":
+                if int(seconds) % 10 == 0 and get_rec_flag() == "True":
                     print("Saving image!")
                     image = Image.open(stream)
                     image.save('static/pi_photos/' + get_timestamp() + ".png", "PNG")

@@ -15,7 +15,7 @@ PIC_FOLDER = os.path.join('static', 'pi_photos')
 app.config['UPLOAD_FOLDER'] = PIC_FOLDER
 
 def get_recording_status():
-    uri = "http://163.221.68.237:5000/is_recording"
+    uri = "http://localhost:5000/is_recording"
     try:
         uResponse = requests.get(uri)
     except requests.ConnectionError:
